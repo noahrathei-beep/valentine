@@ -1,10 +1,4 @@
-
-
-from Flask import Flask, Response 
-
-app = Flask(__name__)
-
-HTML = r"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="utf-8" />
@@ -207,9 +201,9 @@ HTML = r"""<!DOCTYPE html>
     <main class="card" role="dialog" aria-labelledby="title" aria-describedby="subtitle">
       <div class="corner" aria-hidden="true"></div>
 
-      <div class="pill" aria-hidden="true">💌 Kleiner Antrag</div>
+      <div class="pill" aria-hidden="true">💌 Eine kleine Frage von Noah</div>
       <h1 class="title" id="title">Willst du mein Valentinstags‑Date sein?</h1>
-      <p class="subtitle" id="subtitle">Ich bringe auch Schokolade mit. Versprochen. 🍫✨</p>
+      <p class="subtitle" id="subtitle">Ich bringe auch Blumen mit. Versprochen. 🌷✨</p>
 
       <div class="btns">
         <button id="yesBtn" class="btn-yes" aria-label="Jaa">
@@ -337,3 +331,4 @@ def index():
 if __name__ == "__main__":
     # Für lokale Entwicklung in VS Code
     app.run(host="127.0.0.1", port=5000, debug=True)
+
