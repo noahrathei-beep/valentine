@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Willst du mein Valentinstags‑Date sein? 💘</title>
+  <meta name="description" content="Eine charmante kleine Seite mit jaa/nein – mit einem frechen Twist." />
+  <style>
+    :root{
+      --bg1:#ff97b7;
+      --bg2:#ffc3d6;
+      --primary:#ff2e76;
+      --accent:#ff7aa2;
+      --text:#2a2a2a;
+      --white:#ffffff;
+      --glass: rgba(255,255,255,0.65);
+      --shadow: 0 20px 40px rgba(0,0,0,0.15);
+      --ring: 0 0 0 8px rgba(255,46,118,0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+                   Arial, "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+      color: var(--text);
+    }
+
+    body {
+      background: radial-gradient(1200px 800px at 20% 0%, var(--bg2), var(--bg1)) fixed;
+      overflow-x: hidden;
+    }
+
+    /* Schwebende Hintergrund-Herzen */
+    .bg-hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .heart {
+      position: absolute;
+      font-size: 18px;
+      opacity: 0.12;
+      animation: floatUp linear forwards;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08));
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(0) scale(1) rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.18; }
+      90%  { opacity: 0.18; }
+      100% { transform: translateY(-110vh) scale(1.25) rotate(12deg); opacity: 0; }
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: clamp(16px, 4vw, 32px);
+    }
+
+    .card {
+      width: min(680px, 92vw);
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.7);
+      padding: clamp(20px, 5vw, 36px);
+      text-align: center;
+      position: relative;
+    }
+
+    .title {
+      font-weight: 800;
+      font-size: clamp(28px, 4.8vw, 40px);
+      line-height: 1.15;
+      margin: 6px 0 14px;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      margin: 0 0 22px;
+      font-size: clamp(15px, 2.6vw, 18px);
+      color: #5b5b5b;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      color: var(--primary);
+      border: 1px solid #ffd1e1;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      box-shadow: 0 6px 14px rgba(255,46,118,0.18);
+    }
+
+    .btns {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    button {
+      cursor: pointer;
+      user-select: none;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-size: 18px;
+      font-weight: 800;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease, opacity .2s ease, filter .2s ease;
+      will-change: transform;
+    }
+
+    .btn-yes {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: var(--white);
+      box-shadow: 0 14px 28px rgba(255,46,118,.35);
+    }
+    .btn-yes:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 18px 36px rgba(255,46,118,.38); }
+    .btn-yes:active { transform: translateY(0) scale(0.995); }
+
+    .btn-no {
+      background: #fff;
+      color: #3b3b3b;
+      border: 2px dashed #ffadc7;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+    }
+    .btn-no:hover { transform: translateY(-1px) scale(1.02); }
+    .btn-no:active { transform: translateY(0) scale(0.995); }
+
+    .message {
+      margin-top: 18px;
+      font-size: clamp(17px, 2.8vw, 20px);
+      font-weight: 700;
+      color: #1f1f1f;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    .message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Herz-Konfetti */
+    .confetti {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 3;
+    }
+    .confetti span {
+      position: absolute;
+      font-size: 18px;
+      will-change: transform, opacity;
+      animation: burst 900ms ease-out forwards;
+    }
+    @keyframes burst {
+      0%   { transform: translate(0,0) scale(0.6) rotate(0deg); opacity: 1; }
+      70%  { opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(1) rotate(var(--rot)); opacity: 0; }
+    }
+
+    .corner {
+      position: absolute;
+      inset: -2px -2px auto auto;
+      width: 80px;
+      height: 80px;
+      opacity: .14;
+      background:
+        radial-gradient(12px 12px at 30% 30%, #fff, #fff0 60%),
+        radial-gradient(12px 12px at 70% 70%, #fff, #fff0 60%);
+      transform: rotate(12deg);
+    }
+
+    @media (max-width: 420px) {
+      .btns { gap: 10px; }
+      button { width: calc(50% - 8px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-hearts" aria-hidden="true" id="bgHearts"></div>
+
+  <div class="wrap">
+    <main class="card" role="dialog" aria-labelledby="title" aria-describedby="subtitle">
+      <div class="corner" aria-hidden="true"></div>
+
+      <div class="pill" aria-hidden="true">💌 Kleine Frage von Noah</div>
+      <h1 class="title" id="title">Willst du mein Valentinstags‑Date sein?</h1>
+      <p class="subtitle" id="subtitle">Ich bringe auch Blumen mit. Versprochen. 🌷✨</p>
+
+      <div class="btns">
+        <button id="yesBtn" class="btn-yes" aria-label="Jaa">
+          Jaa 💘
+        </button>
+        <button id="noBtn" class="btn-no" aria-label="Nein">
+          Nein 😅
+        </button>
+      </div>
+
+      <p id="msg" class="message" role="status" aria-live="polite"></p>
+    </main>
+  </div>
+
+  <script>
+    // DOM-Elemente
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn  = document.getElementById('noBtn');
+    const msg    = document.getElementById('msg');
+    const bgHearts = document.getElementById('bgHearts');
+
+    // State
+    let noClicks = 0;
+    const maxClicksBeforeHide = 6;
+    const scaleStep = 0.18;
+    const shrinkStep = 0.14;
+
+    // Hintergrund-Herzen
+    const HEARTS = ["❤","💕","💖","💗","💘","💞","💓"];
+    function spawnBackgroundHearts(count = 26) {
+      const w = window.innerWidth;
+      for (let i=0;i<count;i++){
+        const h = document.createElement('div');
+        h.className = 'heart';
+        h.textContent = HEARTS[Math.floor(Math.random()*HEARTS.length)];
+        const left = Math.random()*w;
+        const delay = Math.random()*8;
+        const duration = 8 + Math.random()*10;
+        const size = 12 + Math.random()*18;
+        h.style.left = `${left}px`;
+        h.style.bottom = `-40px`;
+        h.style.animationDuration = `${duration}s`;
+        h.style.animationDelay = `${delay}s`;
+        h.style.fontSize = `${size}px`;
+        bgHearts.appendChild(h);
+        setTimeout(()=>{ if(h && h.parentNode){ h.parentNode.removeChild(h);} }, (delay+duration)*1000 + 500);
+      }
+      setTimeout(()=>spawnBackgroundHearts(10), 3500);
+    }
+    spawnBackgroundHearts();
+
+    // Konfetti
+    function heartConfetti(burstCount = 80) {
+      const container = document.createElement('div');
+      container.className = 'confetti';
+      document.body.appendChild(container);
+
+      const palette = ["❤️","💖","💘","💝","💕","💞","💓","💗"];
+      for (let i=0;i<burstCount;i++){
+        const span = document.createElement('span');
+        span.textContent = palette[Math.floor(Math.random()*palette.length)];
+        const angle = Math.random()*360;
+        const dist = 60 + Math.random()*160;
+        const rad = angle * (Math.PI/180);
+        const dx = Math.cos(rad)*dist;
+        const dy = Math.sin(rad)*dist;
+        const rot = (Math.random()*120 - 60) + 'deg';
+        span.style.setProperty('--dx', dx+'px');
+        span.style.setProperty('--dy', dy+'px');
+        span.style.setProperty('--rot', rot);
+        span.style.left = (Math.random()*120 - 60) + 'px';
+        span.style.top  = (Math.random()*40 - 20) + 'px';
+        container.appendChild(span);
+      }
+      setTimeout(()=> container.remove(), 1000);
+    }
+
+    // Klick-Logik
+    yesBtn.addEventListener('click', () => {
+      msg.textContent = "Perfekt – ich freue mich! 🥰";
+      msg.classList.add('show');
+      yesBtn.style.boxShadow = "var(--ring), 0 16px 34px rgba(255,46,118,.45)";
+      heartConfetti(80);
+
+      yesBtn.disabled = true;
+      noBtn.disabled  = true;
+      yesBtn.style.filter = "saturate(1.05) brightness(1.02)";
+      noBtn.style.opacity = "0";
+      noBtn.style.pointerEvents = "none";
+    });
+
+    noBtn.addEventListener('click', () => {
+      noClicks++;
+
+      const scale = 1 + (noClicks * scaleStep);
+      yesBtn.style.transform = `scale(${scale})`;
+      yesBtn.style.boxShadow = "var(--ring), 0 16px 34px rgba(255,46,118,.42)";
+
+      const noScale = Math.max(0, 1 - (noClicks * shrinkStep));
+      noBtn.style.transform = `scale(${noScale}) rotate(${(Math.min(noClicks,4)*-2)}deg)`;
+      noBtn.style.opacity = String(Math.max(0, 1 - (noClicks*0.15)).toFixed(2));
+
+      yesBtn.animate(
+        [{ transform: `scale(${scale}) translateY(0)` },
+         { transform: `scale(${scale*1.03}) translateY(-2px)` },
+         { transform: `scale(${scale}) translateY(0)` }],
+        { duration: 180, easing: 'ease-out' }
+      );
+
+      if (noClicks >= maxClicksBeforeHide) {
+        noBtn.style.display = 'none';
+        msg.textContent = "Ups… der „Nein“-Button ist irgendwie verschwunden. Vielleicht ein Zeichen? 😉";
+        msg.classList.add('show');
+      }
+    });
+  </script>
+</body>
+</html>
